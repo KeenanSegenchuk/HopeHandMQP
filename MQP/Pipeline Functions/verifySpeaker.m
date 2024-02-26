@@ -1,11 +1,10 @@
-function user = verifySpeaker(audio, ivs, afe)
+function user = verifySpeaker(audio, ivs)
 %   return true if the audio is from a user enrolled in
-    
+    disp("1")
     %certainty threshold for accepting audio as being from user 
-    threshold = .9;
+    threshold = .177;
 
-    features = extract(afe,audio);
-    results = identify(ivs,features,"plda");
+    results = identify(ivs,audio,"plda");
 
     if results.Score(1) < threshold
         user = true;
