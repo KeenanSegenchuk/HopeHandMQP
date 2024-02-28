@@ -8,7 +8,7 @@ classdef Aug
             aug = audioDataAugmenter('AugmentationParameterSource','specify', ...
                  'ApplyTimeStretch',true, ...
                  'SpeedupFactor', speedupfactor);
-            a_a = augment(aug, audio, fs).Audio;
+            a_a = augment(aug, audio, fs).Audio{:};
             sound(a_a, fs);
         end
 
@@ -16,7 +16,7 @@ classdef Aug
             aug = audioDataAugmenter('AugmentationParameterSource','specify', ...
                  'ApplyPitchShift',true, ...
                  'SemitoneShift', toneshift);
-            a_a = augment(aug, audio, fs).Audio;
+            a_a = augment(aug, audio, fs).Audio{:};
             sound(a_a, fs);
         end
 
@@ -24,7 +24,7 @@ classdef Aug
             aug = audioDataAugmenter('AugmentationParameterSource','specify', ...
                  'ApplyVolumeControl',true, ...
                  'VolumeGain', gain);
-            a_a = augment(aug, audio, fs).Audio;
+            a_a = augment(aug, audio, fs).Audio{:};
             sound(a_a, fs);
         end
 
@@ -33,7 +33,7 @@ classdef Aug
             aug = audioDataAugmenter('AugmentationParameterSource','specify', ...
                  'ApplyAddNoise',true, ...
                  'SNR', SNR);
-            a_a = augment(aug, audio, fs).Audio;
+            a_a = augment(aug, audio, fs).Audio{:};
             sound(a_a, fs);
         end
 
@@ -62,7 +62,7 @@ classdef Aug
             %that augment or not
             %NUMAUGS tells how many random augments to apply
 
-            if strcomp(params, "random")
+            if strcmp(params, "random")
                 aug = audioDataAugmenter( ...
                     "AugmentationMode", mode, ...
                     "NumAugmentations",numAugs, ...
@@ -71,7 +71,7 @@ classdef Aug
                     "SpeedupFactorRange", speedup, ...
                     ...
                     "PitchShiftProbability",probabilities(2), ...
-                    "SemitonShiftRange", toneshift, ...
+                    "SemitoneShiftRange", toneshift, ...
                     ...
                     "VolumeControlProbability",probabilities(3), ...
                     "VolumeGainRange",gain, ...
@@ -101,25 +101,23 @@ classdef Aug
             %use audioDataAugmenter aug to augment database at location
             %inputfolder with subfolders classes and save augmented
             %database to outputfolder
-            if ~exists(outputfolder, "dir")
+            if ~exist(outputfolder, "dir")
                 mkdir(outputfolder);
             end
 
             for class = 1:length(classes)
                 path = inputfolder + "\" + classes(class);
                 filenames = dir(path);
+                filenames = filenames(3:length(filenames));
 
-                if ~exists(outputfolder + "\" + classes(class), "dir")
+                if ~exist(outputfolder + "\" + classes(class), "dir")
                     mkdir(outputfolder + "\" + classes(class));
                 end
 
                 for file = 1:length(filenames)
-                    [a, fs] = audioread(path + "\" + filenames(file));
+                    [a, fs] = audioread(path + "\" + filenames(file).name);
                     a_a = augment(aug, a, fs).Audio{:};
-                    for i = 1:length(a_a)
-                        audiowrite(outputfolder + "\" + classes(class) + "\" + filenames(file) + num2str(i), a_a, fs);
-                
-                    end
+                    audiowrite(outputfolder + "\" + classes(class) + "\" +  filenames(file).name, a_a, fs);
                 end
             end
         end
