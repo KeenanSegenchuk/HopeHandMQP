@@ -1,7 +1,7 @@
 function command = cc2(audio, fs)
 %   Check if speech in audio is the length of a single word
     command = true;
-    audio(abs(audio)<.01) = 0;
+    audio(abs(audio)<.05) = 0;
 
     windowDuration = 0.045; % seconds
     numWindowSamples = round(windowDuration*fs);

@@ -1,5 +1,5 @@
-function iv = loadiv()
+function ivx = loadiv()
 %LOADIV loads an i vector system object
-    load iv;
+    load ivx;
 end
 
